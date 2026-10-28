@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Intérprete Bazilio - Etapa 6</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h2> Intérprete Bazilio & ANTLR4</h2>
+            <p></p>
+        </header>
+
+        <div class="card">
+            <h3> Código Fuente (.bzl)</h3>
+            <p class="subtitle">Escribe tus notas y compila al instante:</p>
+            <textarea id="codigoBzl" spellcheck="false">Main |:
+    <w> "Melodia Limpia"
+    toca C4
+    toca E4
+    toca G4
+    toca C5
+:|</textarea>
+            <br>
+            <button onclick="enviarAlBackend()"> Compilar y Generar PDF</button>
+        </div>
+
+        <div class="card">
+            <h3> Consola de Compilación</h3>
+            <pre id="consolaOutput" class="console">Esperando acción...</pre>
+        </div>
+    </div>
+
+    <script>
+        async function enviarAlBackend() {
+            const codigo = document.getElementById('codigoBzl').value;
+            const consola = document.getElementById('consolaOutput');
+
+            consola.textContent = "Enviando código al servidor de Python...\n";
+            
+            try {
+                const respuesta = await fetch('/compilar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo: codigo })
+                });
+
+                const resultado = await respuesta.json();
+                consola.textContent = resultado.logs;
+            } catch (error) {
+                consola.textContent = "Error de conexión con Flask: " + error;
+            }
+        }
+    </script>
+
+</body>
+</html>
